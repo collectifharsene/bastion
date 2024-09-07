@@ -79,12 +79,12 @@ class Subscriber implements PrefixAwareInterface, UseAssetsInterface {
 			wp_nonce_ays( '' );
 		}
 
-		if ( ! key_exists( 'hide_login', $_POST ) || ! key_exists( 'limit_login', $_POST ) || ! key_exists( 'hide_login_slug', $_POST ) ) {
+		if ( ! isset( $_POST['hide_login'] ) || ! isset( $_POST['limit_login'] ) || ! isset( $_POST['hide_login_slug'] ) ) {
 			wp_nonce_ays( '' );
 		}
 
 		$this->settings->set( 'hide_login', $_POST['hide_login'] !== 'false' );
-		$this->settings->set( 'hide_login_slug', sanitize_text_field( $_POST['hide_login_slug'] ) );
+		$this->settings->set( 'hide_login_slug', sanitize_text_field( wp_unslash( $_POST['hide_login_slug'] ) ) );
 		$this->settings->set( 'limit_login', $_POST['limit_login'] !== 'false' );
 
 		wp_send_json_success( [] );

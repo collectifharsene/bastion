@@ -81,15 +81,15 @@ class LimitLoginSubscriber implements DispatcherAwareInterface, PrefixAwareInter
 			return $ip;
 		}
 
-		if ( ! $client_type || ! key_exists( $client_type, $_SERVER ) ) {
+		if ( ! $client_type || ! isset( $_SERVER[$client_type] ) ) {
 			$client_type = $this->dispatcher->apply_string_filters( "{$this->prefix}ip_address_client_type", 'REMOTE_ADDR' );
 		}
 
-		if ( ! key_exists( $client_type, $_SERVER ) ) {
+		if ( ! isset( $_SERVER[$client_type] ) ) {
 			return $ip;
 		}
 
-		return $_SERVER[ $client_type ];
+		return sanitize_url( wp_unslash($_SERVER[ $client_type ]) );
 	}
 
 	/**

@@ -23,7 +23,13 @@ class Subscriber implements PrefixAwareInterface, DispatcherAwareInterface, Sett
 			return $login_url;
 		}
 
-		if ( key_exists( 'REQUEST_URI', $_SERVER ) && mb_strpos( $_SERVER['REQUEST_URI'], 'wp-admin/install.php' ) !== false ) {
+		if( ! isset( $_SERVER['REQUEST_URI'] ) ) {
+			return $login_url;
+		}
+
+		$request_uri =  sanitize_url( wp_unslash( $_SERVER['REQUEST_URI'] ) );
+
+		if ( mb_strpos( $request_uri, 'wp-admin/install.php' ) !== false ) {
 			return admin_url();
 		}
 
@@ -109,13 +115,19 @@ class Subscriber implements PrefixAwareInterface, DispatcherAwareInterface, Sett
 			return $is_login;
 		}
 
-		$request = wp_parse_url( rawurldecode( $_SERVER['REQUEST_URI'] ) );
+		if( ! isset( $_SERVER['REQUEST_URI'] ) ) {
+			return $is_login;
+		}
 
-		if ( ( strpos( rawurldecode( $_SERVER['REQUEST_URI'] ), 'wp-login.php' ) || $request['path'] == site_url( 'wp-login', 'relative' ) ) && ! is_admin() ) {
+		$request_uri = rawurldecode( sanitize_url( wp_unslash( $_SERVER['REQUEST_URI'] ) ) );
+
+		$request = wp_parse_url( $request_uri );
+
+		if ( ( strpos( $request_uri, 'wp-login.php' ) || $request['path'] == site_url( 'wp-login', 'relative' ) ) && ! is_admin() ) {
 			return true;
 		}
 
-		if ( ( strpos( rawurldecode( $_SERVER['REQUEST_URI'] ), 'wp-register.php' ) || $request['path'] == site_url( 'wp-register', 'relative' ) ) && ! is_admin() ) {
+		if ( ( strpos( $request_uri, 'wp-register.php' ) || $request['path'] == site_url( 'wp-register', 'relative' ) ) && ! is_admin() ) {
 			return true;
 		}
 
@@ -136,12 +148,18 @@ class Subscriber implements PrefixAwareInterface, DispatcherAwareInterface, Sett
 			return $current_page;
 		}
 
-		$request = wp_parse_url( rawurldecode( $_SERVER['REQUEST_URI'] ) );
+		if( ! isset( $_SERVER['REQUEST_URI'] ) ) {
+			return $current_page;
+		}
 
-		if ( ( strpos( rawurldecode( $_SERVER['REQUEST_URI'] ), 'wp-login.php' ) || $request['path'] == site_url( 'wp-login', 'relative' ) ) && ! is_admin() ) {
+		$request_uri = rawurldecode( sanitize_url( wp_unslash( $_SERVER['REQUEST_URI'] ) ) );
+
+		$request = wp_parse_url( $request_uri );
+
+		if ( ( strpos( $request_uri, 'wp-login.php' ) || $request['path'] == site_url( 'wp-login', 'relative' ) ) && ! is_admin() ) {
 			return 'index.php';
 		}
-		if ( ( strpos( rawurldecode( $_SERVER['REQUEST_URI'] ), 'wp-register.php' ) || $request['path'] == site_url( 'wp-register', 'relative' ) ) && ! is_admin() ) {
+		if ( ( strpos( $request_uri, 'wp-register.php' ) || $request['path'] == site_url( 'wp-register', 'relative' ) ) && ! is_admin() ) {
 			return 'index.php';
 		}
 
@@ -179,7 +197,7 @@ class Subscriber implements PrefixAwareInterface, DispatcherAwareInterface, Sett
 		if ( $current_page == 'wp-login.php' ) {
 			global $user_login, $error;
 			$redirect_admin = admin_url();
-			$redirect_url   = isset( $_REQUEST['redirect_to'] ) ? $_REQUEST['redirect_to'] : '';
+			$redirect_url   = isset( $_REQUEST['redirect_to'] ) ? sanitize_url( wp_unslash( $_REQUEST['redirect_to'] ) ) : '';
 
 			if ( is_user_logged_in() && ! isset( $_REQUEST['action'] ) ) {
 				nocache_headers();
