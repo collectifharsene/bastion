@@ -64,6 +64,7 @@ class LimitLoginSubscriber implements DispatcherAwareInterface, PrefixAwareInter
 		}
 
 		$counter = (int) $this->transients->get( "counter_{$ip}" );
+
 		$this->transients->set( "counter_{$ip}", ++ $counter, $expiration );
 
 		if ( $counter < $max ) {
@@ -89,7 +90,7 @@ class LimitLoginSubscriber implements DispatcherAwareInterface, PrefixAwareInter
 			return $ip;
 		}
 
-		return sanitize_url( wp_unslash($_SERVER[ $client_type ]) );
+		return sanitize_text_field( wp_unslash($_SERVER[ $client_type ]) );
 	}
 
 	/**
