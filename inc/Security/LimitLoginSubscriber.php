@@ -108,7 +108,7 @@ class LimitLoginSubscriber implements DispatcherAwareInterface, PrefixAwareInter
 		}
 
 		$error = new \WP_Error();
-		$error->add( 'too_many_retries', __( '<strong>ERROR</strong>: Too many failed login attempts.', 'Bastion' ) );
+		$error->add( 'too_many_retries', __( '<strong>ERROR</strong>: Too many failed login attempts.', 'bastion' ) );
 		return $error;
 	}
 
