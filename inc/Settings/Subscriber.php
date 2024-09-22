@@ -71,7 +71,7 @@ class Subscriber implements PrefixAwareInterface, UseAssetsInterface {
 	 * @hook wp_ajax_$prefixsave_settings
 	 */
 	public function save_options() {
-		if ( empty( $_POST['nonce'] ) || ! wp_verify_nonce( $_POST['nonce'], "{$this->prefix}settings" ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+		if ( empty( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash ( $_POST['nonce'] ) ), "{$this->prefix}settings" ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 			wp_nonce_ays( '' );
 		}
 
